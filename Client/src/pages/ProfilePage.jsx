@@ -1,47 +1,56 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useAxios } from "../hooks/useAxios";
+import { actions } from "../actions";
+import { useProfile } from "../hooks/useProfile";
+import ProfileInfo from "../component/profle/ProfileInfo";
+import MyPosts from "../component/profle/MyPosts";
 
 const ProfilePage = () => {
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const [user, setUser] = useState(null);
+  // const [posts, setPosts] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+
+  const { state, dispatch } = useProfile();
 
   const { auth } = useAuth();
   const { api } = useAxios();
   useEffect(() => {
     const fetchProfile = async () => {
-      setLoading(true);
+      dispatch({ type: actions.profile.DATA_FETCHING });
       try {
-        const response = await api.get(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/profile/${auth?.user?.id}`,
-        );
+        const response = await api.get(`/profile/${auth?.user?.id}`);
 
         console.log(response);
 
-        setUser(response?.data?.user);
-        setPosts(response?.data?.posts);
+        if (response.status === 200) {
+          dispatch({
+            type: actions.profile.DATA_FETCHED,
+            data: response?.data,
+          });
+        }
       } catch (error) {
-        setError(error);
+        dispatch({
+          type: actions.profile.DATA_FETCH_ERROR,
+          error: error.message,
+        });
         console.error(error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchProfile();
   }, []);
 
-  if (loading) {
+  if (state?.loading) {
     return <p>fetching profile....</p>;
   }
 
   return (
-    <div>
-      Welcome, {user?.firstName} {user?.lastName}
-      <p>You have {posts?.length} posts.</p>
-    </div>
+    <>
+      <ProfileInfo />
+      <MyPosts />
+    </>
   );
 };
 
