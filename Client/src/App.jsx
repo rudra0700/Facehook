@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
-import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoutes from "./routes/PrivateRoutes";
+import RegistrationPage from "./pages/RegistrationPage";
 const App = () => {
   return (
     <div>
@@ -13,7 +13,7 @@ const App = () => {
           <Route path="/" element={<HomePage />} exact></Route>
           <Route path="/me" element={<ProfilePage />}></Route>
         </Route>
-        <Route path="/register" element={<RegisterPage />}></Route>
+        <Route path="/register" element={<RegistrationPage />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
