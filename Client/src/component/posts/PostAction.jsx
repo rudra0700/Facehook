@@ -7,7 +7,7 @@ import LikeFilledIcon from "../../assets/icons/like-filled.svg";
 import { useAuth } from "../../hooks/useAuth";
 
 const PostAction = ({ post, commentCount }) => {
-    const {auth} = useAuth()
+  const { auth } = useAuth();
   const [liked, setLiked] = useState(post?.likes?.includes(auth?.user?.id));
   const { api } = useAxios();
 
@@ -30,11 +30,11 @@ const PostAction = ({ post, commentCount }) => {
         onClick={handleLike}
         className="flex-center gap-2 text-xs font-bold hover:text-white lg:text-sm"
       >
-         <img
-                    className="w-6 bg-amber-400"
-                    src={liked ? LikeFilledIcon : LikeIcon}
-                    alt="Like"
-                />
+        <img
+          className="w-6 bg-amber-400"
+          src={liked ? LikeFilledIcon : LikeIcon}
+          alt="Like"
+        />
         {!liked && <span>Like</span>}
       </button>
 
