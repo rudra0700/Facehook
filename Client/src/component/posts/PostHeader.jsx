@@ -5,13 +5,34 @@ import EditIcon from "../../assets/icons/edit.svg";
 import TimeIcon from "../../assets/icons/time.svg";
 import { useAvatar } from "../../hooks/useAvatar";
 import { getDateDifferenceFromNow } from "../../utils";
+import { useAuth } from "../../hooks/useAuth";
+import { useAxios } from "../../hooks/useAxios";
+import { usePost } from "../../hooks/usePost";
+import { actions } from "../../actions";
 
 const PostHeader = ({ post }) => {
+  const { auth } = useAuth();
   const { avatarURL } = useAvatar(post);
   const [showAction, setShowAction] = useState(false);
+  const isMe = post?.author?.id === auth?.user?.id;
+  const {api} = useAxios();
+  const {dispatch} = usePost();
 
   const toggleAction = () => {
-    setShowAction(!showAction)
+    setShowAction(!showAction);
+  };
+
+  const handleDelete = async () => {
+    dispatch({type: actions.post.DATA_FETCHING});
+
+    try {
+      const response = await api.delete(`/posts/${post.id}`);
+      if(response.status === 200){
+        dispatch({type: actions.post.POST_DELETED, data: post.id})
+      } 
+    } catch (error) {
+     dispatch({type: actions.post.DATA_FETCH_ERROR, error: error.message}) 
+    }
   }
   return (
     <header className="flex items-center justify-between gap-4">
@@ -34,9 +55,11 @@ const PostHeader = ({ post }) => {
       </div>
 
       <div className="relative">
-        <button onClick={toggleAction}>
-          <img src={ThreeDotsIcon} alt="3dots of Action" />
-        </button>
+        {isMe && (
+          <button onClick={toggleAction}>
+            <img src={ThreeDotsIcon} alt="3dots of Action" />
+          </button>
+        )}
 
         {showAction && (
           <div className="action-modal-container">
@@ -44,7 +67,7 @@ const PostHeader = ({ post }) => {
               <img src={EditIcon} alt="Edit" />
               Edit
             </button>
-            <button className="action-menu-item hover:text-red-500">
+            <button onClick={handleDelete} className="action-menu-item hover:text-red-500">
               <img src={DeleteIcon} alt="Delete" />
               Delete
             </button>

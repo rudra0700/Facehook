@@ -7,7 +7,7 @@ const Field = ({label, children, htmlFor, error}) => {
         <div>
             {label && <label htmlFor={id} className="leading-[138%] lg:text-lg">{label}</label>}
             {children}
-              {!!error && <div role="alert" className='text-red-600'>{error.message}</div>}
+            {!!error && <div role="alert" className='text-red-600'>{error.message}</div>}
         </div>
     );
 };

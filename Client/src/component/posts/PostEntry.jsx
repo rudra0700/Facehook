@@ -5,8 +5,9 @@ import { usePost } from "../../hooks/usePost";
 import { useProfile } from "../../hooks/useProfile";
 import AddPhoto from "../../assets/icons/addPhoto.svg";
 import Field from "../../common/Field";
+import { actions } from "../../actions";
 
-const PostEntry = () => {
+const PostEntry = ({onCreate}) => {
   const { auth } = useAuth();
   const { dispatch } = usePost();
   const { api } = useAxios();
@@ -21,8 +22,22 @@ const PostEntry = () => {
     setError,
   } = useForm();
 
-  const handlePostSubmit = (formData) => {
-    console.log(formData);
+  const handlePostSubmit = async (formData) => {
+    dispatch({type: actions.post.DATA_FETCHING});
+
+    try {
+      const response = await api.post(`/posts`, {formData});
+      if(response.status === 200){
+        dispatch({type: actions.post.DATA_CREATED, data: response.data});
+        onCreate()
+      }
+    } catch (error) {
+      console.error(error);
+      setError("root.random", {
+        type: "random",
+        message: error.message
+      })
+    }
   };
   return (
     <div className="rounded-md border border-[#3F3F3F] bg-mediumDark px-4 py-4 lg:px-7 lg:py-5 relative">
@@ -47,7 +62,7 @@ const PostEntry = () => {
           </div>
 
           <label
-            className="btn-primary cursor-pointer text-gray-100!"
+            className="flex-center gap-2 rounded-md text-sm font-medium lg:text-lg cursor-pointer text-gray-700"
             htmlFor="photo"
           >
             <img src={AddPhoto} alt="Add Photo" />

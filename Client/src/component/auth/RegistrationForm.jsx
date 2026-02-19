@@ -48,7 +48,7 @@ const RegistrationForm = () => {
       </Field>
       <Field label="Last Name" error={errors.lastName}>
         <input
-          {...register("lastName")}
+          {...register("lastName", { required: "Last Name is Required" })}
           className={`w-full rounded-md border border-[#CCCCCC]/14 bg-lighterDark  p-1.5 focus:outline-none lg:p-3 ${
             errors.lastName ? "border-red-500" : "border-gray-200"
           }`}
